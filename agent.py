@@ -14,6 +14,8 @@ from __future__ import annotations
 import typer
 from pathlib import Path
 from typing import Optional
+from dotenv import load_dotenv
+import os
 
 from agent_cli.outline import run_outline
 from agent_cli.paths import resolve_article_dir, ensure_article_dirs
@@ -21,6 +23,10 @@ from agent_cli.utils import update_workflow_step, write_text_file
 
 
 app = typer.Typer(help="文章创作Agent命令行工具")
+
+# 预加载 .env（项目根目录）
+ROOT = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=ROOT/".env", override=False)
 
 
 @app.command()
