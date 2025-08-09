@@ -72,10 +72,24 @@ def run_outline(article_dir: Path) -> None:
     root = Path(__file__).resolve().parents[1]
     _ = _load_agent_config(root)
 
+    # 若不存在统一待办清单，则从模板拷贝一份
+    checklist = article_dir / "article_creation.md"
+    tmpl = root / "Templates" / "article_creation.md"
+    if not checklist.exists() and tmpl.exists():
+        checklist.write_text(tmpl.read_text(encoding="utf-8"), encoding="utf-8")
+
     meta = _make_extracted_meta(article_dir)
     market = _make_market_references(article_dir, meta)
     _render_outline(article_dir, meta, market)
 
     update_workflow_step(article_dir / "workflow_state.json", "outline", "pending_review")
+
+    # 在 checklist 中标记“生成大纲”完成（简单替换方框为已勾选）
+    try:
+        text = checklist.read_text(encoding="utf-8")
+        text = text.replace("- [ ] 1. 生成大纲（`article_structure.md`）", "- [x] 1. 生成大纲（`article_structure.md`）")
+        checklist.write_text(text, encoding="utf-8")
+    except Exception:
+        pass
 
 

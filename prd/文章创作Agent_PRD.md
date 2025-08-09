@@ -68,7 +68,7 @@
 │   ├── knowledge_dict.json               # 术语字典
 │   └── memory_indexing.json              # 索引（元信息）
 ├── Templates/
-│   ├── article_creation.md
+│   ├── article_creation.md                 # 统一的待办清单模板（Workflow）
 │   ├── article_elements_extraction.md
 │   ├── platform_styles_lib.json
 │   └── prompts/                          # Prompt片段模板（Jinja2）
@@ -85,6 +85,7 @@
 阶段与停点：
 
 0) 初始化：创建任务空间与`workflow_state.json`
+   - 同步生成统一待办清单 `article_creation.md`（由 `Templates/article_creation.md` 拷贝），作为人类可读的Workflow
 
 1) 要素提取（extracted_meta.json）
 - 输入：`Materials/`（`transcript.*`为主）
@@ -101,7 +102,8 @@
 - 状态：`steps.market_refs = done`
 
 4) 生成大纲（article_structure.md）→ 人工确认A（停）
-- 状态：`steps.outline = pending_review | approved`
+ - 状态：`steps.outline = pending_review | approved`
+ - Checklist联动：生成大纲后自动在 `article_creation.md` 勾选“生成大纲”；人工确认A通过后自动勾选“人工确认A”与“生成写作剧本”
 
 5) 生成写作剧本（article_writing.md）
 - 状态：`steps.writing_plan = done`
@@ -257,6 +259,7 @@ wechat_config.json（示意）
 ```json
 {
   "review": { "gate_outline": true, "gate_text": true },
+  "workflow": { "sync_checklist": true },
   "verification": { "enabled": true, "strictness": "normal", "source_whitelist": ["mp.weixin.qq.com"] },
   "ingestion": { "trigger": "command", "primary_file_pattern": ["transcript.*.txt","transcript.*.md"] },
   "text_llm": { "provider": "perplexity", "model": "default" },

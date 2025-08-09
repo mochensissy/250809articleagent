@@ -48,6 +48,17 @@ def approve_outline(article: Optional[str] = typer.Option(None, help="文章标�
     update_workflow_step(workflow_path, "writing_plan", "done")
     typer.echo(f"[approve-outline] 已通过大纲并生成写作剧本雏形：{writing_plan_path}")
 
+    # 同步Checklist勾选“人工确认A”与“生成写作剧本”
+    checklist = article_dir / "article_creation.md"
+    if checklist.exists():
+        try:
+            text = checklist.read_text(encoding="utf-8")
+            text = text.replace("- [ ] 2. 人工确认A", "- [x] 2. 人工确认A")
+            text = text.replace("- [ ] 3. 生成写作剧本（`article_writing.md`）", "- [x] 3. 生成写作剧本（`article_writing.md`）")
+            checklist.write_text(text, encoding="utf-8")
+        except Exception:
+            pass
+
 
 if __name__ == "__main__":
     app()

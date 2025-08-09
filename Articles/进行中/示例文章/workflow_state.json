@@ -1,10 +1,10 @@
 {
-  "current_step": "outline",
+  "current_step": "writing_plan",
   "steps": {
     "extract_meta": "",
     "market_refs": "",
-    "outline": "pending_review",
-    "writing_plan": "",
+    "outline": "approved",
+    "writing_plan": "done",
     "draft_text": "",
     "images": "",
     "wechat_draft": ""
