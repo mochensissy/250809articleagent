@@ -1,0 +1,10 @@
+{
+  "review": { "gate_outline": true, "gate_text": true },
+  "verification": { "enabled": true, "strictness": "normal", "source_whitelist": ["mp.weixin.qq.com"] },
+  "ingestion": { "trigger": "command", "primary_file_pattern": ["transcript.*.txt", "transcript.*.md"] },
+  "text_llm": { "provider": "perplexity", "model": "default" },
+  "images": { "provider": "doubao", "generate_on_text_approval": true },
+  "wechat": { "enabled": true }
+}
+
+

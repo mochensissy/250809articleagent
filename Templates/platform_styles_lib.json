@@ -1,0 +1,12 @@
+{
+  "wechat_public": {
+    "structural_preferences": ["总-分-总", "问题-解决-案例-总结"],
+    "paragraph_length": "short",
+    "emoji_policy": "sparse",
+    "title_hooks_catalog": ["反差", "数字化对比", "悬念", "反直觉"],
+    "call_to_action_templates": ["在评论区说说你的看法", "收藏以便复盘"],
+    "image_placeholder_style": "[图片:一句话描述]"
+  }
+}
+
+

@@ -1,0 +1,11 @@
+基于以下主题与关键词，为公众号站内检索生成查询与模式摘要（仅 `mp.weixin.qq.com`）：
+
+主题与要点：
+{{ extracted_meta | tojson }}
+
+要求：
+- 生成若干检索Query，包含 site:mp.weixin.qq.com
+- 返回候选文章的“标题钩子/结构套路/表达手法”摘要
+- 输出 JSON：{ queries[], candidates[], summary{top_title_hooks[], common_structures[], common_devices[]} }
+
+

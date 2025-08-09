@@ -1,0 +1,11 @@
+{
+  "appid": "",
+  "appsecret": "",
+  "draft_default": {
+    "author": "",
+    "digest_policy": "auto_first_paragraph",
+    "show_cover": true
+  }
+}
+
+
