@@ -1,0 +1,15 @@
+{
+  "platform": "wechat_public",
+  "source_domain_whitelist": [
+    "mp.weixin.qq.com"
+  ],
+  "queries": [
+    "site:mp.weixin.qq.com 待定主题 爆款 标题 结构"
+  ],
+  "candidates": [],
+  "summary": {
+    "top_title_hooks": [],
+    "common_structures": [],
+    "common_devices": []
+  }
+}

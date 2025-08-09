@@ -1,17 +1,20 @@
 {
-  "current_step": "init",
+  "current_step": "outline",
   "steps": {
     "extract_meta": "",
     "market_refs": "",
-    "outline": "",
+    "outline": "pending_review",
     "writing_plan": "",
     "draft_text": "",
     "images": "",
     "wechat_draft": ""
   },
-  "checkpoints": { "last_chapter_done": 0 },
-  "memory_basis": { "own_top2": [], "reference_top2": [] },
+  "checkpoints": {
+    "last_chapter_done": 0
+  },
+  "memory_basis": {
+    "own_top2": [],
+    "reference_top2": []
+  },
   "timestamps": {}
 }
-
-
