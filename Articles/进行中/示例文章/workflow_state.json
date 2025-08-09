@@ -1,0 +1,17 @@
+{
+  "current_step": "init",
+  "steps": {
+    "extract_meta": "",
+    "market_refs": "",
+    "outline": "",
+    "writing_plan": "",
+    "draft_text": "",
+    "images": "",
+    "wechat_draft": ""
+  },
+  "checkpoints": { "last_chapter_done": 0 },
+  "memory_basis": { "own_top2": [], "reference_top2": [] },
+  "timestamps": {}
+}
+
+
