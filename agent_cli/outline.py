@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from agent_cli.utils import read_json, write_json, write_text_file, update_workflow_step
+from agent_cli.llm_perplexity import chat_json
 
 
 def _load_agent_config(root: Path) -> Dict[str, Any]:
@@ -47,24 +48,47 @@ def _make_extracted_meta(article_dir: Path) -> Dict[str, Any]:
 
 
 def _make_market_references(article_dir: Path, extracted_meta: Dict[str, Any]) -> Dict[str, Any]:
-    # 占位：生成一个包含 site:mp.weixin.qq.com 的示例查询与空候选
-    theme = extracted_meta.get("title_theme", "")
-    queries = [f"site:mp.weixin.qq.com {theme} 爆款 标题 结构"] if theme else ["site:mp.weixin.qq.com AI 写作 自动化"]
-    market = {
-        "platform": "wechat_public",
-        "source_domain_whitelist": ["mp.weixin.qq.com"],
-        "queries": queries,
-        "candidates": [],
-        "summary": {"top_title_hooks": [], "common_structures": [], "common_devices": []},
-    }
+    theme = extracted_meta.get("title_theme", "AI 写作自动化")
+    system = (
+        "你是检索与信息抽取助手。只针对微信公众号站内内容（mp.weixin.qq.com）输出‘模式摘要’，"
+        "包括标题钩子、结构套路、表达手法；不要返回第三方原文，不要返回与站外域名相关的内容。"
+    )
+    user = (
+        "请基于以下主题生成站内检索Query（包含 site:mp.weixin.qq.com），并给出5-10篇候选文章的‘模式摘要’。\n"
+        f"主题：{theme}\n"
+        "输出JSON：{\n  \"platform\": \"wechat_public\",\n  \"source_domain_whitelist\": [\"mp.weixin.qq.com\"],\n  \"queries\": [],\n  \"candidates\": [ {\"title\":..., \"url\":..., \"title_hooks\":[], \"structural_patterns\":[], \"expression_techniques\":[] } ],\n  \"summary\": { \"top_title_hooks\":[], \"common_structures\":[], \"common_devices\":[] }\n}"
+    )
+    try:
+        market = chat_json(system, user)
+    except Exception:
+        market = {
+            "platform": "wechat_public",
+            "source_domain_whitelist": ["mp.weixin.qq.com"],
+            "queries": [f"site:mp.weixin.qq.com {theme} 爆款 标题 结构"],
+            "candidates": [],
+            "summary": {"top_title_hooks": [], "common_structures": [], "common_devices": []},
+        }
     write_json(article_dir / "market_references.json", market)
     return market
 
 
 def _render_outline(article_dir: Path, extracted_meta: Dict[str, Any], market: Dict[str, Any]) -> None:
-    # 简化：直接输出一个基础大纲，后续再接Jinja模板与LLM生成
+    # 根据市场模式摘要生成标题建议与章节骨架（轻量LLM生成可后续接入；现按规则合成）
     title = extracted_meta.get("title_theme", "你的文章标题")
-    content = f"""# 文章大纲（候选）\n\n## 5个标题建议\n- {title}\n- {title}（加强版1）\n- {title}（加强版2）\n- {title}（数字钩子）\n- {title}（反差钩子）\n\n## 章节设计\n### 第一章 现状与痛点\n- 目标：让读者共鸣\n- 要点：创作成本高、频率低\n\n### 第二章 方案与原则\n- 目标：传达方法论\n- 要点：脚本+提示词+配置+Workflow\n\n### 第三章 实施路径\n- 目标：可复制落地\n- 要点：目录、状态机、两次人工确认\n"""
+    hooks = market.get("summary", {}).get("top_title_hooks", []) or ["反差", "数字化对比", "悬念"]
+    title_candidates = [
+        f"{title}",
+        f"{title}｜{hooks[0]}视角", 
+        f"{title}：{hooks[1]}解读" if len(hooks) > 1 else f"{title}（进阶）",
+        f"{title}（{hooks[2] if len(hooks)>2 else '爆款'}钩子）",
+        f"{title}（实操指南）",
+    ]
+    content = "# 文章大纲（候选）\n\n## 5个标题建议\n" + "\n".join(f"- {t}" for t in title_candidates) + "\n\n" + (
+        "## 章节设计\n"
+        "### 第一章 现状与痛点\n- 目标：让读者共鸣\n- 要点：创作成本高、频率低、外部变化快\n\n"
+        "### 第二章 方案与原则\n- 目标：传达方法论\n- 要点：脚本+提示词+配置+Workflow；两次人工确认\n\n"
+        "### 第三章 实施路径\n- 目标：可复制落地\n- 要点：目录、状态机、事实核查、公众号草稿上传\n"
+    )
     write_text_file(article_dir / "article_structure.md", content)
 
 
