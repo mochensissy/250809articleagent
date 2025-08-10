@@ -20,6 +20,7 @@ import os
 from agent_cli.outline import run_outline
 from agent_cli.paths import resolve_article_dir, ensure_article_dirs
 from agent_cli.utils import update_workflow_step, write_text_file
+from agent_cli.draft import run_draft_text_only
 
 
 app = typer.Typer(help="文章创作Agent命令行工具")
@@ -64,6 +65,14 @@ def approve_outline(article: Optional[str] = typer.Option(None, help="文章标�
             checklist.write_text(text, encoding="utf-8")
         except Exception:
             pass
+
+
+@app.command("draft")
+def draft_text_only(article: Optional[str] = typer.Option(None, help="文章标题（默认选择最新一条进行中任务）"), text_only: bool = typer.Option(True, "--text-only", help="仅生成纯文本成稿（不含配图）")) -> None:
+    """按剧本与大纲扩写纯文本成稿，并生成审稿包摘要。"""
+    article_dir = resolve_article_dir(article)
+    run_draft_text_only(article_dir)
+    typer.echo(f"[draft] 已产出纯文本成稿与审稿包：{article_dir}")
 
 
 if __name__ == "__main__":
